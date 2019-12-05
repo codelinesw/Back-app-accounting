@@ -51,7 +51,7 @@
           </div>
           <div class="card-body w-100">
             <div class="table">
-              <div class="container-days-week">
+              <div class="container-days-week" style="display: none;">
                 <div class="days-week">
                   <p class="day_">DOMINGO</p>
                 </div>
@@ -76,6 +76,9 @@
               </div>
               <div class="number-days-container">
                 
+              </div>
+              <div class="events-days">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis illo, expedita cupiditate cum dolorem, hic dolores sit alias dignissimos accusantium architecto neque repellendus aliquid, a rerum quaerat excepturi iure cumque.
               </div>
             </div>
           </div>

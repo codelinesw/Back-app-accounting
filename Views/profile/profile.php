@@ -84,15 +84,15 @@
               </div>
               <div class="col">
                 <div class="btn-group">
-                  <div class="input-group mr-1"><button class="btn btn-light border">Mes</button></div>
-                  <div class="input-group"><button class="btn btn-light border">Dia</button></div>
+                  <div class="input-group mr-1"><button type="button" class="btn btn-light border btn-month">Mes</button></div>
+                  <div class="input-group"><button type="button" class="btn btn-light border btn-day">Dia</button></div>
                 </div>
               </div>
             </div>
           </div>
           <div class="card-body w-100">
             <div class="table" style="width: 108%; left:-21px;">
-              <div class="container-days-week">
+              <div class="container-days-week" style="display: flex;">
                 <div class="days-week">
                   <p class="day_">DOMINGO</p>
                 </div>
@@ -117,6 +117,48 @@
               </div>
               <div class="number-days-container">
                 
+              </div>
+              <div class="events-days border" style="display: none;">
+               <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">8am</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">9am</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">10am</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">11am</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">12am</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">2pm</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">3pm</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">4pm</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+                <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">5pm</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
+               <div class="tr border border-top-0 border-left-0 border-right-0">
+                 <div class="td time bg-light border border-left-0 border-top-0 border-bottom-0"><span class="time">6pm</span></div>
+                 <div class="td events"><span class="event_ text-truncate rounded bg-success">Festival de amor y amistad</span><span class="event_ text-truncate rounded bg-success">Festival de blancos y negros</span></div>
+               </div>
               </div>
             </div>
           </div>
