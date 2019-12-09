@@ -10,6 +10,7 @@ class mborrower{
 	private $email;
 	private $password;
 	private $value;
+	private $birthdate;
 	private $gender;
 	private $city;
 	private $neigh_service;
@@ -59,6 +60,32 @@ class mborrower{
 
 	}
 
+	public function signup_to_complete()
+	{
+		$sql = 'INSERT INTO u_users_info VALUES(NULL,:id_user,:value,:birthdate,:gender,:city,:neigh_service,:phone,:picture,:status,:id_uprofile)';
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':id_user',$this->id_user,\PDO::PARAM_STR);
+		$query->bindParam(':value',$this->value,\PDO::PARAM_STR);
+		$query->bindParam(':birthdate',$this->birthdate,\PDO::PARAM_STR);
+		$query->bindParam(':gender',$this->gender,\PDO::PARAM_STR);
+		$query->bindParam(':city',$this->city,\PDO::PARAM_STR);
+		$query->bindParam(':neigh_service',$this->neigh_service,\PDO::PARAM_STR);
+		$query->bindParam(':phone',$this->phone,\PDO::PARAM_INT);
+		$query->bindParam(':picture',$this->picture,\PDO::PARAM_STR);
+		$query->bindParam(':status',$this->status,\PDO::PARAM_INT);
+		$query->bindParam(':id_uprofile',$this->id_uprofile,\PDO::PARAM_INT);
+		$query->execute();
+
+		if($query){
+			if($query->rowCount() > 0)
+			{
+				return "true";
+			}else{
+				return "false";
+			}
+		}
+	}
+
 
 	public function list()
 	{
@@ -71,7 +98,7 @@ class mborrower{
 
 		if($query){
 			if($query->rowCount() > 0){
-				return $query->fetch_array();
+				return $query->fetch();
 			}
 		}			
 	}
@@ -79,6 +106,22 @@ class mborrower{
 	public function list_id()
 	{
 
+	}
+
+	public function list_for_email()
+	{
+		$sql = 'SELECT * FROM u_users us 
+				WHERE us.email = :email';
+
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':email',$this->email);
+		$query->execute();
+
+		if($query){
+			if($query->rowCount() > 0){
+				return $query->fetch();
+			}
+		}
 	}
 
 	public function update()

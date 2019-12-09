@@ -46,24 +46,24 @@
           <h6 class="title">Registrate </h6>
         </div>
         <div class="card-body">
-          <form id="loginform" class="form-horizontal" role="form">
+          <form action=""  method="POST" id="loginform" class="form-horizontal" role="form">
                 <div style="margin-bottom: 25px" class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></span>
                   </div>
-                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                  <input type="text" name="name" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
                 <div style="margin-bottom: 25px" class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1"><i class="fas fa-envelope"></i></span>
                   </div>
-                  <input type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
+                  <input type="email" name="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
                 </div>
                 <div style="margin-bottom: 25px" class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
                   </div>
-                  <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
+                  <input type="password" name="pass" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
                 </div>
               <div class="form-row" style="margin-bottom: 20px;">
                 <div class="col-auto">

@@ -9,12 +9,18 @@ class register{
 
 	public function register_to_complete()
 	{
-		include_once('Views/register_to_complete.php');
+		if(isset($_COOKIE['email_user']))
+		{
+		  include_once('Views/register_to_complete.php');
+		}else{
+			echo "No tienes permiso para acceder a esta url";
+		}
+		
 	}
 
-	public function chosee_picture()
+	public function choose_picture()
 	{
-		include_once('Views/chosee_picture.php');
+		include_once('Views/choose_picture.php');
 	}
 
 	public function register_()

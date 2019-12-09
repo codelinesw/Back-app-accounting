@@ -58,16 +58,16 @@ class borrower{
 
 		if(empty($name) && empty($email) && empty($pass))
 		{
-			return "false";
+			echo "false";
 		}else if(empty($name))
 		{
-			return "false";
+			echo "false";
 		}else if(empty($email))
 		{
-			return "false";
+			echo "false";
 		}else if(empty($pass))
 		{
-			return "false";
+			echo "false";
 		}else{
 			$this->borrower->set("name",$name);
 			$this->borrower->set("email",$email);
@@ -75,7 +75,79 @@ class borrower{
 			$this->borrower->set("created",$created);
 			$this->borrower->set("updated",$update);
 			$this->borrower->set("id_rol",2);
-			echo $this->borrower->signup();
+			if($this->borrower->signup() == "true")
+			{
+				setcookie('email_user', $email,time()+1800,'/','localhost');
+				echo json_encode(array('action' =>  'true','URL' => 'http://localhost:8089/website-testing/borrower/register_to_complete/'));
+			}else{
+				echo "failed";
+			}
+		}
+	}
+
+	public function register_complete_one()
+	{
+		if(isset($_COOKIE['email_user']))
+		{
+			$email = isset($_COOKIE['email_user']) ? $_COOKIE['email_user'] : "";
+			$this->borrower->set('email',$email);
+			$data = $this->borrower->list_for_email();
+			$id_user = ($data['id'] > 0 || $data != undefined || !empty($data)) ? $data['id'] : 0;
+			$value = isset($_POST['value']) ? $_POST['value'] : '';
+			$birthdate = isset($_POST['birthdate']) ? $_POST['birthdate'] : '';
+			$gender = isset($_POST['gender']) ? $_POST['gender'] : '';
+			$city = isset($_POST['city']) ? $_POST['city'] : '';
+			$neigh = isset($_POST['neigh']) ? $_POST['neigh'] : '';
+			$number_phone = isset($_POST['number_phone']) ? $_POST['number_phone'] : '';
+
+			if(empty($id_user) && empty($value) && empty($birthdate) && empty($gender) && empty($city) && empty($neigh) && empty($number_phone))
+			{
+				echo "false";
+			}else if(empty($id_user) || $id_user == 0)
+			{
+				echo "false";
+			}else if(empty($value))
+			{
+				echo "false";
+			}else if(empty($birthdate))
+			{
+				echo "false";
+			}else if(empty($gender))
+			{
+				echo "false";
+			}else if(empty($city))
+			{
+				echo "false";
+			}else if(empty($neigh))
+			{
+				echo "false";
+			}else if(empty($number_phone))
+			{
+				echo "false";
+			}else{
+				$picture_default = 'doggy_avatar.svg';
+				$status_default = 2;
+				$id_uprofile = 1;
+				$this->borrower->set("id_user",$id_user);
+				$this->borrower->set("value",$value);
+				$this->borrower->set("birthdate",$birthdate);
+				$this->borrower->set("gender",$gender);
+				$this->borrower->set("city",$city);
+				$this->borrower->set("neigh_service",$neigh);
+				$this->borrower->set("phone",$number_phone);
+				$this->borrower->set("picture",$picture_default);
+				$this->borrower->set("status",$status_default);
+				$this->borrower->set("id_uprofile",$id_uprofile);
+				
+				if($this->borrower->signup_to_complete() == "true")
+				{
+					setcookie('email_user', $email,time()+1800,'/','localhost');
+					echo json_encode(array('action' =>  'true','URL' => 'http://localhost:8089/website-testing/register/choose_picture/'));
+				}else{
+					echo "failed";
+				}
+			}
+
 		}
 	}
 }
