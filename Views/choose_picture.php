@@ -41,7 +41,7 @@
      <div class="row">
         <div class="col d-flex justify-content-center">
           <div class="card border-0 col-md-4 mb-5">
-            <form action="" method="POST">  
+            <form action="/website-testing/borrower/upload_picture/" method="POST" class="form-load form-picture" enctype="multipart/form-data">  
               <div class="form-group text-center">
                 <div class="card rounded col-md- p-5" style="position:relative; margin:auto;border: 3px dotted #dedede;">
                   <img src="<?php echo path;?>img/portal/svg/001-adoption.svg" class="card-img-top mb-4"  width="115" height="115" alt="...">
@@ -50,12 +50,12 @@
               <div class="form-group">
                 <div class="input-group mb-3">
                   <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="inputFile">
+                    <input type="file" name="file_img" class="custom-file-input" id="inputFile">
                     <label class="btn btn-outline-secondary input_file" for="inputFile">Seleccionar tu imagen o foto favorita</label>
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-success p-2">Guardar</button>
+              <button type="submit" class="btn btn-success p-2 load-picture">Guardar</button>
             </form>
             <div class="container_circle_preloader">
                <div class="child_container_ wx-100">
@@ -69,12 +69,70 @@
   <script src="<?php echo path;?>js/jquery-3.4.1.min.js"></script>
   <script src="<?php echo path;?>bootstrap-4.3.1/js/bootstrap.js"></script>
   <script>
-    // document.querySelector('.dropdown-toggle').addEventListener('click',e => {
-    //   e.preventDefault();
-    //   console.log("event Handle");
-    //   document.querySelector('.dropdown-menu').classList.toggle('show');
-      
-    // });
+    var file = ":";
+    var form = $('.form-picture');
+
+    document.querySelector('.custom-file-input').addEventListener('change', e => {
+      file = e.target.files[0];
+    });
+
+    function is_valid_extension(file)
+    {
+      let file_ = (file != "") ? file : "";
+
+      if(file_ != "")
+      {
+        let extension_file = file_.split(".");
+        extension_file = extension_file[extension_file.length-1];
+        let valid_extensions = ['png','jpg','jpeg'];
+        if(valid_extensions.includes(extension_file))
+        {
+          return true;
+        }else{
+          return false;
+        }
+      }else{
+        return false;
+      }
+    }
+    document.querySelector('.load-picture').addEventListener('click',e => {
+      e.preventDefault();
+      console.log("event Handle"); 
+      if(file == ":"){
+         console.log("Your must choose a image before upload your picture");
+         file = ":";
+      }else{
+          var dataForm = new FormData(form[0]);
+          file = dataForm.get('file_img');
+          if(is_valid_extension(file.name))
+          {
+            console.log(file);
+            if (FileReader) {
+              let fr = new FileReader();
+              fr.onload = function () {
+                  document.querySelector('.card-img-top').src = fr.result;
+              }
+
+              fr.readAsDataURL(file);
+            }
+            $.ajax({
+              url: form.attr('action'),
+              type:"POST",
+              data:dataForm,
+              processData: false,
+              contentType: false,
+
+              success: function(response){
+                console.log(response);
+              }
+
+            });
+          }else{
+            console.log("Formato incorrecto del archivo....");
+          }
+          
+      }
+    });
   </script>
 </body>
 

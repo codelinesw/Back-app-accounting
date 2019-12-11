@@ -150,6 +150,31 @@ class borrower{
 
 		}
 	}
+
+	public function upload_picture()
+	{
+		$file_img = isset($_FILES['file_img']) ? $_FILES['file_img'] : "";
+
+		if(!empty($file_img))
+		{
+			$extension = explode('.',$_FILES['file_img']['name']);
+			$extension = (!empty($extension)) ? end($extension) : "";
+			$valid_extensions = ['png','jpg'];
+
+			if(!empty($extension))
+			{
+				if(in_array($extension, $valid_extensions))
+				{
+					echo "Formato correcto";
+				}else{
+					echo "Formato incorrecto";
+				}
+			}else{
+				echo "Formato de imagen no permitido";
+			}
+			
+		}
+	}
 }
 
 

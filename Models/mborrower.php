@@ -126,7 +126,20 @@ class mborrower{
 
 	public function update()
 	{
+		$sql = 'UPDATE u_users_info SET  picture = :picture WHERE id =:id_user';
 
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':picture',$this->picture,\PDO::PARAM_STR);
+		$query->bindParam(':id_user',$this->id_user,\PDO::PARAM_INT);
+		$query->execute();
+
+		if($query){
+			if($query->rowCount() > 0){
+				return "true";
+			}else{
+				return "false";
+			}
+		}
 	}
 
 	public function delete()
