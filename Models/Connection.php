@@ -5,7 +5,7 @@ class Connection{
 	private $host = "localhost;";
 	private $user = "root";
 	private $pass = "";
-	private $database = "pets_";
+	private $database = "accounting";
 	private $connection_;
 
 	public function __construct()

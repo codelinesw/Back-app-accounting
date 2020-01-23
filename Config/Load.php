@@ -9,16 +9,11 @@ class Load{
 
 		$file = 'Controllers/'.$controller.'controller.php';
 
-
 		$controllers= array(
 			'index' => ['index'],
-			'login' => ['index','sign_in','update', 'delete'],
-			'user_profile_choice' => ['index'],
-			'register' => ['index','register_','register_to_complete','register_complete_one','choose_picture','profile'],
-			'borrower' => ['index','register_','register_to_complete','register_complete_one','choose_picture','upload_picture','profile'],
-			'portal' => ['index'],
-			'cuidadores' => ['index'],
-			'calendar' => ['index']
+			'clients_' => ['index','add','list','update', 'delete','listar_prueba'],
+			'sales_' => ['add','list','list_for_client','list_id'],
+			'payment_product' => ['add','list']
 		);
 		
 		if(!file_exists($file)){
