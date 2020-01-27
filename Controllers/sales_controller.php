@@ -1,16 +1,29 @@
 <?php namespace Controllers; 
 
 require('Models/Sales.php');
+require('fpdf182/fpdf.php');
 
 use Models\Sales as Sales;
 
 class sales_{
 
 	private $Sales;
+	private $pdf;
+	private $B=0;
+    private $I=0;
+    private $U=0;
+    private $HREF='';
+    private $ALIGN='';
 
 	public function __construct(){
 
 		$this->Sales = new Sales();
+		$this->pdf = new FPDF();
+	}
+
+	public function index()
+	{
+		
 	}
 
 	public function validate_fields($p_product_id,$c_client_id,$s_price,$s_count,$s_sale_date){
@@ -52,20 +65,20 @@ class sales_{
 
 		$p_product_id = isset($request['p_product_id']) ? $request['p_product_id'] : '';
 		$c_client_id = isset($request['c_client_id']) ? $request['c_client_id'] : '';
-		$s_description = isset($request['s_description']) ? $request['s_description'] : 'Venta de';
-		$s_price = isset($request['s_price']) ? str_replace('.','',$request['s_price']) : 0;
-		$s_count = isset($request['s_count']) ? $request['s_count'] : 0;
+		$productname = isset($request['productname']) ? $request['productname'] : "";
+		$s_count = isset($request['qty']) ? $request['qty'] : 0;
+		$s_price = isset($request['price']) ? str_replace('.','',$request['price']) : 0;
 		$s_sale_date = isset($request['s_sale_date']) ? $request['s_sale_date'] : '';
-
-		if($this->validate_fields($p_product_id,$c_client_id,0,$s_sale_date)){
+		$s_description = "Venta de ".$s_count." ".$productname." por una valor de $".$s_price;
+		if($this->validate_fields($p_product_id,$c_client_id,$s_price,$s_count,$s_sale_date)){
 			$this->setData($p_product_id,$c_client_id,$s_description,$s_price,$s_count,0,$s_sale_date);
 			if($this->Sales->add()){
-				echo json_encode(array(array('response' => 'ok')));
+				echo 'ok';
 			}else{
-				echo json_encode(array(array('response' => 'failed')));
+				echo 'failed';
 			}
 		}else{
-		  echo json_encode(array(array('response' => 'empty')));
+		  echo 'empty';
 		}
 		
 	}
@@ -79,24 +92,211 @@ class sales_{
  		$Received_JSON = file_get_contents('php://input');
  		// decoding the received JSON and store into $obj variable.
  		$request = json_decode($Received_JSON,true);
-		$c_client_id = (isset($request['itemId'])) ? $request['itemId'] : '';
-		$s_sales_id = (isset($request['itemIdProduct'])) ? $request['itemIdProduct'] : '';
+		$c_client_id = (isset($request['c_client_id'])) ? $request['c_client_id'] : '';
 		$this->Sales->set("c_client_id",$c_client_id);
-		if(empty($s_sales_id) || $s_sales_id == "NO-IDP"){
-			if(empty($c_client_id)){
-				echo json_encode(array(array('response' => 'empty')));
-			}else{
-				echo $this->Sales->list_id();
-			}
-		}else{
-			$this->Sales->set("c_sales_id",$s_sales_id);
-			if(empty($c_client_id)){
-				echo json_encode(array(array('response' => 'empty')));
-			}else{
-				echo $this->Sales->list_id_sale();
-			}
+		if(empty($c_client_id)){
+		   echo json_encode(array(array('response' => 'empty')));
+	    }else{
+		   echo $this->Sales->list_id();
 		}
 
+	}
+
+	public function list_id_sale()
+	{
+		// Getting the received JSON into $Received_JSON variable.
+ 		$Received_JSON = file_get_contents('php://input');
+ 		// decoding the received JSON and store into $obj variable.
+ 		$request = json_decode($Received_JSON,true);
+		$c_client_id = (isset($request['c_client_id'])) ? $request['c_client_id'] : '';
+		$this->Sales->set("c_client_id",$c_client_id);
+		$s_sales_id = (isset($request['s_sales_id'])) ? $request['s_sales_id'] : '';
+		$this->Sales->set("c_sales_id",$s_sales_id);
+		if(empty($c_client_id)){
+		   echo json_encode(array(array('response' => 'empty')));
+	    }else{
+		   echo $this->Sales->list_id_sale();
+		}
+
+	}
+	
+    function WriteHTML($html)
+    {
+        //HTML parser
+        $html=str_replace("\n",' ',$html);
+        $a=preg_split('/<(.*)>/U',$html,-1,PREG_SPLIT_DELIM_CAPTURE);
+        foreach($a as $i=>$e)
+        {
+            if($i%2==0)
+            {
+                //Text
+                if($this->HREF)
+                    $this->pdf->PutLink($this->HREF,$e);
+                elseif($this->ALIGN=='center')
+                    $this->pdf->Cell(0,5,$e,0,1,'C');
+                else
+                    $this->pdf->Write(5,$e);
+            }
+            else
+            {
+                //Tag
+                if($e[0]=='/')
+                    $this->CloseTag(strtoupper(substr($e,1)));
+                else
+                {
+                    //Extract properties
+                    $a2=explode(' ',$e);
+                    $tag=strtoupper(array_shift($a2));
+                    $prop=array();
+                    foreach($a2 as $v)
+                    {
+                        if(preg_match('/([^=]*)=["\']?([^"\']*)/',$v,$a3))
+                            $prop[strtoupper($a3[1])]=$a3[2];
+                    }
+                    $this->OpenTag($tag,$prop);
+                }
+            }
+        }
+    }
+
+    function OpenTag($tag,$prop)
+    {
+        //Opening tag
+        if($tag=='B' || $tag=='I' || $tag=='U')
+            $this->pdf->SetStyle($tag,true);
+        if($tag=='A')
+            $this->pdf->HREF=$prop['HREF'];
+        if($tag=='BR')
+            $this->pdf->Ln(5);
+        if($tag=='P')
+            $this->pdf->ALIGN=$prop['ALIGN'];
+        if($tag=='HR')
+        {
+            if( !empty($prop['WIDTH']) )
+                $Width = $prop['WIDTH'];
+            else
+                $Width = $this->pdf->w - $this->pdf->lMargin-$this->pdf->rMargin;
+            $this->pdf->Ln(2);
+            $x = $this->pdf->GetX();
+            $y = $this->pdf->GetY();
+            $this->pdf->SetLineWidth(0.4);
+            $this->pdf->Line($x,$y,$x+$Width,$y);
+            $this->pdf->SetLineWidth(0.2);
+            $this->pdf->Ln(2);
+        }
+    }
+
+    function CloseTag($tag)
+    {
+        //Closing tag
+        if($tag=='B' || $tag=='I' || $tag=='U')
+            $this->pdf->SetStyle($tag,false);
+        if($tag=='A')
+            $this->pdf->HREF='';
+        if($tag=='P')
+            $this->pdf->ALIGN='';
+    }
+
+    function SetStyle($tag,$enable)
+    {
+        //Modify style and select corresponding font
+        $this->pdf->$tag+=($enable ? 1 : -1);
+        $style='';
+        foreach(array('B','I','U') as $s)
+            if($this->pdf->$s>0)
+                $style.=$s;
+        $this->pdf->SetFont('',$style);
+    }
+
+    function PutLink($URL,$txt)
+    {
+        //Put a hyperlink
+        $this->pdf->SetTextColor(0,0,255);
+        $this->pdf->SetStyle('U',true);
+        $this->pdf->Write(5,$txt,$URL);
+        $this->pdf->SetStyle('U',false);
+        $this->pdf->SetTextColor(0);
+    }
+	public function view_pdf(){
+
+		$this->pdf->AddPage();
+		$this->pdf->SetFont('Arial','B',15);
+		$this->WriteHTML('<h1>Saldos del cliente</h1><br>');
+		$this->pdf->SetFont('Arial','',10);
+		$this->WriteHTML('<h1>Jhon Denver Murillo Mendez</h1><br>');
+		$this->WriteHTML('<h3>Telefono: </h3><h3>3117222333</h3><br>');
+		$this->WriteHTML('<h3>Direccion: </h3><h3>Cra. 33a #39-34</h3><br>');
+		$this->WriteHTML('<h3>Venta: </h3><h3>2 Jeans americanos para mujer talla 16</h3><br>');
+		$this->WriteHTML('<hr>');
+		$this->WriteHTML('<ul style="backgroundColor:red;">
+			<li style="width:120px;">Item</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Prenda Vendida</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Fecha de Abono</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Abono</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Saldo</li>
+			</ul><br>');
+		$this->WriteHTML('<hr>');
+		$this->WriteHTML('<h1>    </h1><ul><li style="width:220px;margin-left:15px;">1</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">2 Jeans americanos</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">27/01/2020</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">$30.000</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">$50.000</li></ul><br>');
+		$this->WriteHTML('<h1>    </h1><ul><li style="width:220px;margin-left:15px;">2</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">2 Jeans americanos</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">27/01/2020</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">$10.000</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">$40.000</li></ul><br>');
+		$this->WriteHTML('<h1>    </h1><ul><li style="width:220px;margin-left:15px;">3</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">2 Jeans americanos</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">27/01/2020</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">$20.000</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">$20.000</li></ul><br><hr>');
+		$this->WriteHTML('<h1></h1><ul><li style="width:220px;margin-left:15px;"></li>
+			<li style="width:220px;"><h1>SALDO ACTUAL</h1></li>
+			<li style="width:220px;">$20.000</li></ul><br>');
+		$this->pdf->Output();
+		
+	}
+
+	public function download_file(){
+		$file = $this->view_pdf();
+		$filename = "SALDOS-DE-JHON.pdf";
+		header('Content-type: application/pdf');
+		header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+		header('Content-Transfer-Encoding: binary');
+		readfile($filename);
 	}
 
 }
