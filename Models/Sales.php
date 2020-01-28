@@ -165,6 +165,85 @@ class Sales{
 		}	
 	}
 
+	public function formatDate($date){
+    	$date = explode('-', $date);
+    	$month = substr($date[2], 0,strpos($date[2]," "));
+    	$date = $date[1].'/'.$month.'/'.$date[0];
+    	return trim($date);
+    }
+
+    public function number_format_($number){
+    	$number =str_replace("COP ","", money_format("%i", $number)); 
+    	return $number;
+    }
+
+	public function data_to_print(){
+		$sql = "SELECT cli.c_name,cli.c_phone,cli.c_address,pro.p_name,sa.s_count,sa.s_sale_date, sa.s_price as price,sa.s_description,sa.s_sales_id,pay.p_payment_product_id,pay.p_date_payment, CASE WHEN pay.p_payment_product IS NULL THEN 0 WHEN pay.p_payment_product = 0 THEN pay.p_payment_product ELSE pay.p_payment_product END as p_payment_product, CASE WHEN pay.p_payment_product IS NULL THEN (sa.s_price-0) WHEN pay.p_payment_product = 0 THEN (sa.s_price-pay.p_payment_product) ELSE (sa.s_price-pay.p_payment_product) END as balance FROM s_sales sa INNER JOIN p_products pro ON pro.p_products_id = sa.p_product_id /*LEFT*/ INNER JOIN p_payment_product pay ON pay.s_sales_id = sa.s_sales_id INNER JOIN c_clients cli ON cli.c_client_id = sa.c_client_id WHERE sa.c_client_id=:c_client_id AND sa.s_sales_id=:c_sales_id";
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':c_client_id',$this->c_client_id,\PDO::PARAM_INT);
+		$query->bindParam(':c_sales_id',$this->c_sales_id,\PDO::PARAM_INT);
+		$query->execute();
+
+		if($query){
+			if($query->rowCount() > 0){
+				$info = "";
+				setlocale(LC_MONETARY,"en_ES");
+				$count = 0;
+				$balance = 0;
+				$total_abono = 0;
+				$current_balance = 0;
+				while($row = $query->fetch()){
+					if($count == 0 && $count < 1){
+						$info = '<h1>'.$row["c_name"].'</h1><br><h3>Telefono: </h3><h3>'.$row["c_phone"].'</h3><br><h3>Direccion: </h3><h3>'.$row["c_address"].'</h3><br><h3>Venta: </h3><h3>'.substr($row["s_description"],8).'</h3><br><hr><ul style="backgroundColor:red;">
+			<li style="width:120px;">Item</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Prenda Vendida</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Fecha de Abono</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Valor de la venta</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Abono</li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;"></li>
+			<li style="width:220px;">Saldo</li>
+			</ul><br><hr>';
+					}
+					$total_abono += $row["p_payment_product"];
+					$balance =($row["price"]-$total_abono);
+					$count  = ($count == 0) ? 1  : $count++;
+					$info .= '<h1>    </h1><ul><li style="width:220px;margin-left:15px;">'.$count.'</li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;">'.substr(str_replace("Venta de ", "", $row["s_description"]), 0,strpos(str_replace("Venta de ", "", $row["s_description"]), "por")).'</li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;">'.$this->formatDate($row["p_date_payment"]).'</li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;">$'.$this->number_format_($row["price"]).'</li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;">$'.$this->number_format_($row["p_payment_product"]).'</li>
+					<li style="width:220px;"></li>
+					<li style="width:220px;">$'.str_replace("COP ","",money_format('%i',$balance)).'</li></ul><br>';
+					$current_balance = ($row["price"]-$total_abono);
+					$count++;
+				}
+
+				$info .= '<hr><h1></h1><ul><li style="width:220px;margin-left:15px;"></li><li style="width:220px;"><strong>Saldo actual: </strong></li><li style="width:220px;">$'.str_replace("COP ","",money_format('%i',$current_balance)).'</li></ul><br>';
+
+				return $info;
+			}else{
+				return 'empty';
+			}
+		}
+	}
+
 	public function update()
 	{
 

@@ -217,76 +217,23 @@ class sales_{
         $this->pdf->SetStyle('U',false);
         $this->pdf->SetTextColor(0);
     }
-	public function view_pdf(){
 
+	public function view_pdf($params){
+		//we split it's all params
+		$params = explode('-', $params);
 		$this->pdf->AddPage();
 		$this->pdf->SetFont('Arial','B',15);
 		$this->WriteHTML('<h1>Saldos del cliente</h1><br>');
 		$this->pdf->SetFont('Arial','',10);
-		$this->WriteHTML('<h1>Jhon Denver Murillo Mendez</h1><br>');
-		$this->WriteHTML('<h3>Telefono: </h3><h3>3117222333</h3><br>');
-		$this->WriteHTML('<h3>Direccion: </h3><h3>Cra. 33a #39-34</h3><br>');
-		$this->WriteHTML('<h3>Venta: </h3><h3>2 Jeans americanos para mujer talla 16</h3><br>');
-		$this->WriteHTML('<hr>');
-		$this->WriteHTML('<ul style="backgroundColor:red;">
-			<li style="width:120px;">Item</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">Prenda Vendida</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">Fecha de Abono</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">Abono</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">Saldo</li>
-			</ul><br>');
-		$this->WriteHTML('<hr>');
-		$this->WriteHTML('<h1>    </h1><ul><li style="width:220px;margin-left:15px;">1</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">2 Jeans americanos</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">27/01/2020</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">$30.000</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">$50.000</li></ul><br>');
-		$this->WriteHTML('<h1>    </h1><ul><li style="width:220px;margin-left:15px;">2</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">2 Jeans americanos</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">27/01/2020</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">$10.000</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">$40.000</li></ul><br>');
-		$this->WriteHTML('<h1>    </h1><ul><li style="width:220px;margin-left:15px;">3</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">2 Jeans americanos</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">27/01/2020</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">$20.000</li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;"></li>
-			<li style="width:220px;">$20.000</li></ul><br><hr>');
-		$this->WriteHTML('<h1></h1><ul><li style="width:220px;margin-left:15px;"></li>
-			<li style="width:220px;"><h1>SALDO ACTUAL</h1></li>
-			<li style="width:220px;">$20.000</li></ul><br>');
+		//get all data for print.
+		$c_client_id = (isset($params[0])) ? $params[0] : '';
+		$this->Sales->set("c_client_id",$c_client_id);
+		$s_sales_id = (isset($params[1])) ? $params[1] : '';
+		$this->Sales->set("c_sales_id",$s_sales_id);
+		$data = $this->Sales->data_to_print();
+		$this->WriteHTML($data);
 		$this->pdf->Output();
+		
 		
 	}
 
