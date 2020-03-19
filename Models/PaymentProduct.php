@@ -28,6 +28,7 @@ class PaymentProduct{
 		return $this->$attr;
 	}
 	public function getDateFormat($date){
+		//echo $date;
 		$date_ = explode('/', $date);
 		$date__ = explode(' ', $date_[2]);
 		$current_date =  $date__[0]."-".$date_[1]."-".$date_[0]." ".$date__[1];
@@ -41,7 +42,7 @@ class PaymentProduct{
 				WHERE sa.c_client_id =:c_client_id 
 				AND sa.s_sales_id =:s_sales_id
 				';
-		$date = $this->getDateFormat($this->p_date_payment);		
+		$date = $this->getDateFormat($this->p_date_payment);	
 		$query = $this->connection->_prepare_($sql);
 		$query->bindParam(':c_client_id',$this->c_client_id,\PDO::PARAM_INT);
 		$query->bindParam(':s_sales_id',$this->s_sales_id,\PDO::PARAM_INT);
@@ -51,9 +52,9 @@ class PaymentProduct{
 		if($query){
 			if($query->rowCount() > 0)
 			{
-				return "true";
+				return true;
 			}else{
-				return "false";
+				return false;
 			}
 		}
 
@@ -140,13 +141,39 @@ class PaymentProduct{
 
 	public function update()
 	{
-
+		$sql = "UPDATE p_payment_product SET c_client_id =:c_client_id,s_sales_id=:s_sales_id,p_payment_product=:amount,p_date_payment=:p_date_payment";
+		$date = $this->getDateFormat($this->p_date_payment);		
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':c_client_id',$this->c_client_id,\PDO::PARAM_INT);
+		$query->bindParam(':s_sales_id',$this->s_sales_id,\PDO::PARAM_INT);
+		$query->bindParam(':amount',$this->p_payment_product,\PDO::PARAM_INT);
+		$query->bindParam(':p_date_payment',$date,\PDO::PARAM_STR);
+		$query->execute();
+		if($query){
+			if($query->rowCount() > 0)
+			{
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 
 
 	public function delete()
 	{
+		$sql = "DELETE FROM p_payment_product WHERE p_payment_product_id = :id";
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':id',$this->p_payment_product_id,\PDO::PARAM_INT);
+		$query->execute();
 
+		if($query){
+			if($query->rowCount() > 0){
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 
 	

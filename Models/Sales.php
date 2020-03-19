@@ -27,9 +27,9 @@ class Sales{
 	public function get($attr){
 		return $this->$attr;
 	}
-	public function getDateFormat($date){
+	public function getDateFormat($date,$action){
 		$date_ = explode('/', $date);
-		$date__ = explode(' ', $date_[2]);
+		$date__ = ($action == "add") ? explode(' ', $date_[2]) : $date_;
 		$current_date =  $date__[0]."-".$date_[1]."-".$date_[0]." ".$date__[1];
 		return $current_date;
 	}
@@ -39,7 +39,7 @@ class Sales{
 		$sql = 'INSERT INTO s_sales VALUES(NULL,:p_product_id,:c_client_id,:s_description,:s_price,:s_count,:s_sale_date)';
 		$query = $this->connection->_prepare_($sql);
 		
-		$date_ = $this->getDateFormat($this->s_sale_date);
+		$date_ = $this->getDateFormat($this->s_sale_date,"add");
 		$query->bindParam(':p_product_id',$this->p_product_id,\PDO::PARAM_INT);
 		$query->bindParam(':c_client_id',$this->c_client_id,\PDO::PARAM_INT);
 		$query->bindParam('s_description',$this->s_description,\PDO::PARAM_STR);
@@ -96,7 +96,7 @@ class Sales{
 	public function list_id()
 	{
 		$sql = "
-			SELECT cli.c_client_id,cli.c_name,pro.p_name,sa.s_count,sa.s_sale_date, sa.s_price as price,sa.s_description,sa.s_sales_id,
+			SELECT cli.c_client_id,cli.c_name,pro.p_name,sa.s_count,sa.s_sale_date, sa.s_price as price,sa.s_description,sa.s_sales_id,pro.p_products_id,
 			CASE
 			WHEN pay.p_payment_product IS NULL THEN 0
 			WHEN pay.p_payment_product = 0 THEN pay.p_payment_product
@@ -246,13 +246,47 @@ class Sales{
 
 	public function update()
 	{
+		$sql = 'UPDATE s_sales SET p_product_id=:p_product_id,c_client_id=:c_client_id,s_description=:s_description,s_price=:s_price,s_count=:s_count,s_sale_date=:s_sale_date WHERE s_sales_id =:s_sales_id';
+		$query = $this->connection->_prepare_($sql);
+		
+		$date_ = $this->getDateFormat($this->s_sale_date,"update");
 
+		// echo $this->p_product_id.' '.$this->c_client_id.$this->s_description.$this->s_price.' '.$this->s_count.' '.$date_.' '.$this->c_sales_id;
+
+		$query->bindParam(':p_product_id',$this->p_product_id,\PDO::PARAM_INT);
+		$query->bindParam(':c_client_id',$this->c_client_id,\PDO::PARAM_INT);
+		$query->bindParam('s_description',$this->s_description,\PDO::PARAM_STR);
+		$query->bindParam(':s_price',$this->s_price,\PDO::PARAM_INT);
+		$query->bindParam(':s_count',$this->s_count,\PDO::PARAM_INT);
+		$query->bindParam(':s_sale_date',$date_,\PDO::PARAM_STR);
+		$query->bindParam(':s_sales_id',$this->c_sales_id,\PDO::PARAM_INT);
+		$query->execute();
+
+		if($query){
+			if($query->rowCount() > 0)
+			{
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 
 
 	public function delete()
 	{
+		$sql = "DELETE FROM s_sales WHERE s_sales_id = :id";
+		$query = $this->connection->_prepare_($sql);
+		$query->bindParam(':id',$this->c_sales_id,\PDO::PARAM_INT);
+		$query->execute();
 
+		if($query){
+			if($query->rowCount() > 0){
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 
 	

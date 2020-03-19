@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 23-01-2020 a las 05:30:12
+-- Tiempo de generación: 19-03-2020 a las 12:56:00
 -- Versión del servidor: 10.4.8-MariaDB
 -- Versión de PHP: 7.3.11
 
@@ -65,8 +65,8 @@ CREATE TABLE `c_clients` (
 
 INSERT INTO `c_clients` (`c_client_id`, `c_value`, `c_name`, `c_address`, `c_phone`, `ad_role_id`, `c_date`, `updated`) VALUES
 (6, 212223, 'Jhon Denver Murillo', 'Cra. 33a #39-34', 3117222333, 2, '2020-01-23 03:34:00', '2020-01-22 22:34:00'),
-(7, 212223, 'Carolina Velasco', 'Cra. 82a #2-39', 3122883520, 2, '2020-01-23 03:34:26', '2020-01-22 22:34:26'),
-(8, 212223, 'Jairo Alberto', 'Cra. 33a #39-34', 44, 2, '2020-01-23 04:16:10', '2020-01-22 23:16:10');
+(8, 212223, 'Jairo Alberto', 'Cra. 33a #39-34', 3218075562, 2, '2020-01-23 04:16:10', '2020-01-22 23:16:10'),
+(11, 212223, 'Samir abadia', 'Cra.60 #39-34', 3117222333, 2, '2020-03-18 04:20:13', '2020-03-17 23:20:13');
 
 -- --------------------------------------------------------
 
@@ -81,6 +81,20 @@ CREATE TABLE `p_payment_product` (
   `p_balance` float NOT NULL,
   `p_date_payment` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `p_payment_product`
+--
+
+INSERT INTO `p_payment_product` (`p_payment_product_id`, `s_sales_id`, `p_payment_product`, `p_balance`, `p_date_payment`) VALUES
+(21, 11, 20000, 20000, '2020-01-30 00:56:38'),
+(22, 14, 70000, 90000, '2020-01-30 00:55:02'),
+(31, 15, 45000, 17000, '2020-03-15 15:58:15'),
+(32, 18, 20000, 35000, '2020-03-16 03:45:49'),
+(33, 18, 12000, 43000, '2020-03-16 03:46:22'),
+(35, 19, 15000, 15000, '2020-03-16 03:47:40'),
+(38, 20, 15000, 30000, '2020-03-18 04:22:14'),
+(39, 20, 20000, 25000, '2020-03-18 04:22:24');
 
 -- --------------------------------------------------------
 
@@ -138,6 +152,18 @@ CREATE TABLE `s_sales` (
   `s_count` int(2) NOT NULL,
   `s_sale_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `s_sales`
+--
+
+INSERT INTO `s_sales` (`s_sales_id`, `p_product_id`, `c_client_id`, `s_description`, `s_price`, `s_count`, `s_sale_date`) VALUES
+(11, 6, 8, 'Venta de 1 Camisa Hombre por una valor de $50000', 50000, 1, '2028-01-28 06:00:00'),
+(14, 1, 8, 'Venta de 2 Jean por una valor de $160000', 160000, 2, '2020-01-29 23:45:50'),
+(15, 4, 8, 'Venta de 2 Boxer por una valor de $62000', 62000, 2, '2020-03-14 19:28:50'),
+(18, 1, 6, 'Venta de 1 Jean por una valor de $55000', 55000, 1, '2020-03-16 03:45:27'),
+(19, 4, 6, 'Venta de 1 Boxer por una valor de $30000', 30000, 1, '2020-03-16 03:46:46'),
+(20, 1, 11, 'Venta de 1 Jean por una valor de $45000', 45000, 1, '2020-03-18 04:20:51');
 
 --
 -- Índices para tablas volcadas
@@ -199,13 +225,13 @@ ALTER TABLE `ad_role`
 -- AUTO_INCREMENT de la tabla `c_clients`
 --
 ALTER TABLE `c_clients`
-  MODIFY `c_client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `c_client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `p_payment_product`
 --
 ALTER TABLE `p_payment_product`
-  MODIFY `p_payment_product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `p_payment_product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `p_products`
@@ -223,7 +249,7 @@ ALTER TABLE `p_purchases`
 -- AUTO_INCREMENT de la tabla `s_sales`
 --
 ALTER TABLE `s_sales`
-  MODIFY `s_sales_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `s_sales_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Restricciones para tablas volcadas

@@ -26,7 +26,7 @@ class payment_product{
  		// decoding the received JSON and store into $obj variable.
  		$request = json_decode($Received_JSON,true);
 
- 		$c_client_id = (isset($request['c_client_id'])) ? $request['c_client_id'] : '';
+ 		$c_client_id = (isset($request['c_client_id'])) ? str_replace('"', '', $request['c_client_id']) : '';
  		$this->PaymentProduct->set("c_client_id",$c_client_id);
  		$s_sales_id = (isset($request['s_sales_id'])) ? $request['s_sales_id'] : '';
  		$this->PaymentProduct->set("s_sales_id",$s_sales_id);
@@ -36,20 +36,21 @@ class payment_product{
  		$this->PaymentProduct->set("p_date_payment",$p_date_payment);
 
 		if(empty($c_client_id) && empty($s_sales_id) && empty($amount) && empty($p_date_payment)){
-			echo json_encode(array(array('response' => $request['name'])));
+			echo 'empty';
 		}else if(empty($c_client_id)){
-			echo json_encode(array(array('response' => 'empty')));
+			echo 'empty';
 		}else if(empty($s_sales_id)){
-			echo json_encode(array(array('response' => 'empty')));
+			echo 'empty';
 		}else if(empty($amount)){
-			echo json_encode(array(array('response' => 'empty')));
+			echo 'empty';
 		}else if(empty($p_date_payment)){
-			echo json_encode(array(array('response' => 'empty')));
+			echo 'empty';
 		}else{
+			//echo $c_client_id." - ".$s_sales_id." - ".$amount." - ".$p_date_payment;
 			if($this->PaymentProduct->add()){
-				echo json_encode(array(array('response' => 'ok')));
+				echo 'ok';
 			}else{
-				echo json_encode(array(array('response' => 'failed')));
+				echo 'failed';
 			}
 		}
 	}
@@ -58,17 +59,24 @@ class payment_product{
 		// Getting the received JSON into $Received_JSON variable.
  		$Received_JSON = file_get_contents('php://input');
  		$request = json_decode($Received_JSON,true);
+ 		echo $this->PaymentProduct->list();
+	}
 
- 		$type = (isset($request['filter'])) ? $request['filter'] : '' ;
- 		if(!empty($type)){
- 			if($type == "all"){
- 				echo $this->PaymentProduct->list();
- 			}else if($type == "date"){
- 				$data = isset($request['sendata']) ? $request['sendata'] : '';
-				$this->Clients->set("p_date_payment",$data);
- 				echo $this->PaymentProduct->list_for_date();
+	public function delete(){
+		$Received_JSON = file_get_contents('php://input');
+ 		$request = json_decode($Received_JSON,true);
+
+ 		$id = (isset($request['p_payment_product_id'])) ? $request['p_payment_product_id'] : '' ;
+ 		if(!empty($id)){
+ 			$this->PaymentProduct->set('p_payment_product_id',$id);
+ 			if($this->PaymentProduct->delete()){
+ 				echo "ok";
+ 			}else{
+ 				echo "failed";
  			}
- 		}	
+ 		}else{
+ 			echo "empty";
+ 		}
 	}
 }
 

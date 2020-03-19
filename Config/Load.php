@@ -12,8 +12,8 @@ class Load{
 		$controllers= array(
 			'index' => ['index'],
 			'clients_' => ['index','add','list','update', 'delete','listar_prueba'],
-			'sales_' => ['add','list','list_for_client','list_id','list_id_sale','view_pdf','download_file'],
-			'payment_product' => ['add','list']
+			'sales_' => ['add','list','list_for_client','list_id','list_id_sale','view_pdf','download_file','update','delete'],
+			'payment_product' => ['add','list','update','delete']
 		);
 		
 		if(!file_exists($file)){

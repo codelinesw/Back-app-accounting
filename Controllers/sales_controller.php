@@ -53,6 +53,7 @@ class sales_{
 		$this->Sales->set("s_count",$s_count);
 		$this->Sales->set("s_sale_date",$s_sale_date);
 		$this->Sales->set("c_sales_id",$s_sales_id);
+
 	}
 	
 	public function add()
@@ -244,6 +245,52 @@ class sales_{
 		header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
 		header('Content-Transfer-Encoding: binary');
 		readfile($filename);
+	}
+
+	public function update(){
+		// Getting the received JSON into $Received_JSON variable.
+ 		$Received_JSON = file_get_contents('php://input');
+ 
+ 		// decoding the received JSON and store into $obj variable.
+ 		$request = json_decode($Received_JSON,true);
+
+		$p_product_id = isset($request['p_product_id']) ? $request['p_product_id'] : '';
+		$c_client_id = isset($request['c_client_id']) ? $request['c_client_id'] : '';
+		$productname = isset($request['productname']) ? $request['productname'] : "";
+		$s_count = isset($request['qty']) ? $request['qty'] : 0;
+		$s_price = isset($request['price']) ? str_replace('.','',$request['price']) : 0;
+		$s_sale_date = isset($request['s_sale_date']) ? $request['s_sale_date'] : '';
+		$s_description = "Venta de ".$s_count." ".$productname." por una valor de $".$s_price;
+		$s_sales_id = isset($request['s_sales_id']) ? $request['s_sales_id'] : '';
+		//print_r($request);
+		if($this->validate_fields($p_product_id,$c_client_id,$s_price,$s_count,$s_sale_date)){
+			$this->setData($p_product_id,$c_client_id,$s_description,$s_price,$s_count,$s_sales_id,$s_sale_date);
+			if($this->Sales->update()){
+				echo 'ok';
+			}else{
+				echo 'failed';
+			}
+		}else{
+		  echo 'empty';
+		}
+	}
+
+	public function delete(){
+		$Received_JSON = file_get_contents('php://input');
+ 		// decoding the received JSON and store into $obj variable.
+ 		$request = json_decode($Received_JSON,true);
+		$s_sales_id = (isset($request['s_sales_id'])) ? $request['s_sales_id'] : '';
+		$this->Sales->set("c_sales_id",$s_sales_id);
+		//print_r($request);
+		if(empty($s_sales_id)){
+		   echo 'empty';
+	    }else{
+		   if($this->Sales->delete()){
+		   		echo "ok";
+		   }else{
+		   		echo "failed";
+		   }
+		}
 	}
 
 }
